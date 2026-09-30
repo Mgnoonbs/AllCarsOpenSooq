@@ -1,11 +1,10 @@
 name: OpenSooq Toyota Cars Scraper Bot
 
 on:
-  schedule:
-    - cron: '*/5 * * * *'
   workflow_dispatch:
   repository_dispatch:
     types: [cron_trigger]
+
 
 jobs:
   run-scraper:
