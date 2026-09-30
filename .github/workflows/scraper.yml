@@ -37,12 +37,12 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           CHAT_ID: ${{ secrets.CHAT_ID }}
           SCRAPINGANT_API_KEY: ${{ secrets.SCRAPINGANT_API_KEY }}
-          SCRAPINGANT_API_KEY-A2: ${{ secrets['SCRAPINGANT_API_KEY-A2'] }}
-          SCRAPINGANT_API_KEY-A3: ${{ secrets['SCRAPINGANT_API_KEY-A3'] }}
-          SCRAPINGANT_API_KEY-A4: ${{ secrets['SCRAPINGANT_API_KEY-A4'] }}
-          SCRAPINGANT_API_KEY-M5: ${{ secrets['SCRAPINGANT_API_KEY-M5'] }}
-          SCRAPINGANT_API_KEY-M6: ${{ secrets['SCRAPINGANT_API_KEY-M6'] }}
-          SCRAPINGANT_API_KEY-M7: ${{ secrets['SCRAPINGANT_API_KEY-M7'] }}
+          SCRAPINGANT_API_KEY_A2: ${{ secrets.SCRAPINGANT_API_KEY_A2 }}
+          SCRAPINGANT_API_KEY_A3: ${{ secrets.SCRAPINGANT_API_KEY_A3 }}
+          SCRAPINGANT_API_KEY_A4: ${{ secrets.SCRAPINGANT_API_KEY_A4 }}
+          SCRAPINGANT_API_KEY_M5: ${{ secrets.SCRAPINGANT_API_KEY_M5 }}
+          SCRAPINGANT_API_KEY_M6: ${{ secrets.SCRAPINGANT_API_KEY_M6 }}
+          SCRAPINGANT_API_KEY_M7: ${{ secrets.SCRAPINGANT_API_KEY_M7 }}
         run: python main.py
 
       - name: Save DB Cache
