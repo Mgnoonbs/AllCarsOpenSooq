@@ -19,9 +19,18 @@ UAE_TZ = pytz.timezone("Asia/Dubai")
 # الإعدادات
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
-SCRAPER_API_KEY = os.getenv("SCRAPER_API_KEY")
-SCRAPINGANT_API_KEY = os.getenv("SCRAPINGANT_API_KEY")
-ZENSCRAPE_API_KEY = os.getenv("ZENSCRAPE_API_KEY")
+SCRAPINGANT_KEY_NAMES = (
+    "SCRAPINGANT_API_KEY",
+    "SCRAPINGANT_API_KEY-A2",
+    "SCRAPINGANT_API_KEY-A3",
+    "SCRAPINGANT_API_KEY-A4",
+    "SCRAPINGANT_API_KEY-M5",
+    "SCRAPINGANT_API_KEY-M6",
+    "SCRAPINGANT_API_KEY-M7",
+)
+SCRAPINGANT_API_KEYS = [
+    (name, os.getenv(name)) for name in SCRAPINGANT_KEY_NAMES if os.getenv(name)
+]
 DB_FILE = os.getenv("DB_FILE", "sent_ads.db")
 MAX_ADS_PER_RUN = int(os.getenv("MAX_ADS_PER_RUN", "5"))
 
@@ -63,50 +72,33 @@ def fetch_direct(url: str) -> str | None:
 
 
 def fetch_with_fallback(url: str) -> str | None:
-    """يجرب الجلب المباشر ثم الخدمات الاختيارية عند توفير مفاتيحها."""
+    """يجرب الجلب المباشر ثم مفاتيح ScrapingAnt بالتسلسل."""
     html = fetch_direct(url)
     if html:
         return html
 
-    providers: list[tuple[str, str, dict[str, str]]] = []
-    if SCRAPER_API_KEY:
-        providers.append((
-            "ScraperAPI",
-            "https://api.scraperapi.com/",
-            {"api_key": SCRAPER_API_KEY, "url": url, "render": "true", "country_code": "ae"},
-        ))
-    if SCRAPINGANT_API_KEY:
-        providers.append((
-            "ScrapingAnt",
-            "https://api.scrapingant.com/v2/general",
-            {"url": url, "x-api-key": SCRAPINGANT_API_KEY, "browser": "true"},
-        ))
+    if not SCRAPINGANT_API_KEYS:
+        print(f"[{now_uae()}] لا توجد مفاتيح ScrapingAnt مهيأة.")
+        return None
 
-    for name, endpoint, params in providers:
+    for name, api_key in SCRAPINGANT_API_KEYS:
         try:
-            print(f"[{now_uae()}] محاولة الجلب عبر {name}...")
-            response = requests.get(endpoint, params=params, timeout=90)
-            if response.ok and response.text:
-                return response.text
-            print(f"[{now_uae()}] {name} أعاد HTTP {response.status_code}")
-        except requests.RequestException as exc:
-            print(f"[{now_uae()}] خطأ في {name}: {exc}")
-        time.sleep(2)
-
-    if ZENSCRAPE_API_KEY:
-        try:
-            print(f"[{now_uae()}] محاولة الجلب عبر ZenScrape...")
+            print(f"[{now_uae()}] محاولة الجلب عبر مفتاح {name}...")
             response = requests.get(
-                "https://app.zenscrape.com/api/v1/get",
-                params={"url": url, "render": "true"},
-                headers={"apikey": ZENSCRAPE_API_KEY},
+                "https://api.scrapingant.com/v2/general",
+                params={"url": url, "x-api-key": api_key, "browser": "true"},
                 timeout=90,
             )
             if response.ok and response.text:
+                print(f"[{now_uae()}] نجح الجلب عبر مفتاح {name}.")
                 return response.text
-            print(f"[{now_uae()}] ZenScrape أعاد HTTP {response.status_code}")
+            print(
+                f"[{now_uae()}] مفتاح {name} غير متاح أو استنفد حصته "
+                f"(HTTP {response.status_code})، الانتقال للمفتاح التالي."
+            )
         except requests.RequestException as exc:
-            print(f"[{now_uae()}] خطأ في ZenScrape: {exc}")
+            print(f"[{now_uae()}] خطأ في مفتاح {name}: {exc}، الانتقال للمفتاح التالي.")
+        time.sleep(2)
 
     return None
 

@@ -36,9 +36,13 @@ jobs:
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           CHAT_ID: ${{ secrets.CHAT_ID }}
-          SCRAPER_API_KEY: ${{ secrets.SCRAPER_API_KEY }}
           SCRAPINGANT_API_KEY: ${{ secrets.SCRAPINGANT_API_KEY }}
-          ZENSCRAPE_API_KEY: ${{ secrets.ZENSCRAPE_API_KEY }}
+          SCRAPINGANT_API_KEY-A2: ${{ secrets['SCRAPINGANT_API_KEY-A2'] }}
+          SCRAPINGANT_API_KEY-A3: ${{ secrets['SCRAPINGANT_API_KEY-A3'] }}
+          SCRAPINGANT_API_KEY-A4: ${{ secrets['SCRAPINGANT_API_KEY-A4'] }}
+          SCRAPINGANT_API_KEY-M5: ${{ secrets['SCRAPINGANT_API_KEY-M5'] }}
+          SCRAPINGANT_API_KEY-M6: ${{ secrets['SCRAPINGANT_API_KEY-M6'] }}
+          SCRAPINGANT_API_KEY-M7: ${{ secrets['SCRAPINGANT_API_KEY-M7'] }}
         run: python main.py
 
       - name: Save DB Cache
